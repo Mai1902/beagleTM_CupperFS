@@ -1,0 +1,301 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 95%;
+            height: 100%;
+            background-color: #222222;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 95%;
+            height: 100%;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+        #config {
+            float: left;
+            width: 400px;
+            height: 600px;
+        }
+        
+
+        
+        /* position absolute is important and the container has to be relative or absolute as well. */
+	    div.popup {
+            position:absolute;
+            top:0px;
+            left:0px;
+            display:none;
+            background-color:#f5f4ed;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+            border: 1px solid #808074;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+	    }
+
+	    /* hide the original tooltip */
+	    .vis-network-tooltip {
+	      display:none;
+	    }
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<div id = "config"></div>
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"color": "#dd4b39", "font": {"color": "white"}, "id": "31568528", "label": "31568528", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/31568528\" target=\"_blank\"\u003eLOTUS: A single- and multitask machine learning algorithm for the prediction of cancer driver genes", "value": 1}, {"font": {"color": "white"}, "id": "10647931", "label": "10647931", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/10647931\" target=\"_blank\"\u003e Link:10647931"}, {"font": {"color": "white"}, "id": "21376230", "label": "21376230", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/21376230\" target=\"_blank\"\u003e Link:21376230"}, {"font": {"color": "white"}, "id": "18948947", "label": "18948947", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18948947\" target=\"_blank\"\u003e Link:18948947"}, {"font": {"color": "white"}, "id": "15192155", "label": "15192155", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/15192155\" target=\"_blank\"\u003e Link:15192155"}, {"font": {"color": "white"}, "id": "2274789", "label": "2274789", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/2274789\" target=\"_blank\"\u003e Link:2274789"}, {"font": {"color": "white"}, "id": "12893203", "label": "12893203", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/12893203\" target=\"_blank\"\u003e Link:12893203"}, {"font": {"color": "white"}, "id": "6095109", "label": "6095109", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/6095109\" target=\"_blank\"\u003e Link:6095109"}, {"font": {"color": "white"}, "id": "17611206", "label": "17611206", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17611206\" target=\"_blank\"\u003e Link:17611206"}, {"font": {"color": "white"}, "id": "14993899", "label": "14993899", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/14993899\" target=\"_blank\"\u003e Link:14993899"}, {"font": {"color": "white"}, "id": "24071849", "label": "24071849", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/24071849\" target=\"_blank\"\u003e Link:24071849"}, {"font": {"color": "white"}, "id": "27899578", "label": "27899578", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/27899578\" target=\"_blank\"\u003e Link:27899578"}, {"font": {"color": "white"}, "id": "23539594", "label": "23539594", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23539594\" target=\"_blank\"\u003e Link:23539594"}, {"font": {"color": "white"}, "id": "23770567", "label": "23770567", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23770567\" target=\"_blank\"\u003e Link:23770567"}, {"font": {"color": "white"}, "id": "22960745", "label": "22960745", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/22960745\" target=\"_blank\"\u003e Link:22960745"}, {"font": {"color": "white"}, "id": "23945592", "label": "23945592", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23945592\" target=\"_blank\"\u003e Link:23945592"}, {"font": {"color": "white"}, "id": "22759861", "label": "22759861", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/22759861\" target=\"_blank\"\u003e Link:22759861"}, {"font": {"color": "white"}, "id": "23340843", "label": "23340843", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23340843\" target=\"_blank\"\u003e Link:23340843"}, {"font": {"color": "white"}, "id": "24390350", "label": "24390350", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/24390350\" target=\"_blank\"\u003e Link:24390350"}, {"font": {"color": "white"}, "id": "22904074", "label": "22904074", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/22904074\" target=\"_blank\"\u003e Link:22904074"}, {"font": {"color": "white"}, "id": "23383675", "label": "23383675", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23383675\" target=\"_blank\"\u003e Link:23383675"}, {"font": {"color": "white"}, "id": "29625053", "label": "29625053", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/29625053\" target=\"_blank\"\u003e Link:29625053"}, {"font": {"color": "white"}, "id": "26635391", "label": "26635391", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/26635391\" target=\"_blank\"\u003e Link:26635391"}, {"font": {"color": "white"}, "id": "24183448", "label": "24183448", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/24183448\" target=\"_blank\"\u003e Link:24183448"}, {"font": {"color": "white"}, "id": "25690659", "label": "25690659", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25690659\" target=\"_blank\"\u003e Link:25690659"}, {"font": {"color": "white"}, "id": "27911828", "label": "27911828", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/27911828\" target=\"_blank\"\u003e Link:27911828"}, {"font": {"color": "white"}, "id": "22460905", "label": "22460905", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/22460905\" target=\"_blank\"\u003e Link:22460905"}, {"font": {"color": "white"}, "id": "25501392", "label": "25501392", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25501392\" target=\"_blank\"\u003e Link:25501392"}, {"font": {"color": "white"}, "id": "27333808", "label": "27333808", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/27333808\" target=\"_blank\"\u003e Link:27333808"}, {"font": {"color": "white"}, "id": "21977986", "label": "21977986", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/21977986\" target=\"_blank\"\u003e Link:21977986"}, {"font": {"color": "white"}, "id": "28126037", "label": "28126037", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28126037\" target=\"_blank\"\u003e Link:28126037"}, {"font": {"color": "white"}, "id": "29236960", "label": "29236960", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/29236960\" target=\"_blank\"\u003e Link:29236960"}, {"font": {"color": "white"}, "id": "27811361", "label": "27811361", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/27811361\" target=\"_blank\"\u003e Link:27811361"}, {"font": {"color": "white"}, "id": "28399410", "label": "28399410", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28399410\" target=\"_blank\"\u003e Link:28399410"}, {"font": {"color": "white"}, "id": "28564583", "label": "28564583", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28564583\" target=\"_blank\"\u003e Link:28564583"}, {"font": {"color": "white"}, "id": "26130958", "label": "26130958", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/26130958\" target=\"_blank\"\u003e Link:26130958"}, {"font": {"color": "white"}, "id": "26201458", "label": "26201458", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/26201458\" target=\"_blank\"\u003e Link:26201458"}, {"font": {"color": "white"}, "id": "27004405", "label": "27004405", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/27004405\" target=\"_blank\"\u003e Link:27004405"}, {"font": {"color": "white"}, "id": "25954303", "label": "25954303", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25954303\" target=\"_blank\"\u003e Link:25954303"}, {"font": {"color": "white"}, "id": "11809771", "label": "11809771", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/11809771\" target=\"_blank\"\u003e Link:11809771"}, {"font": {"color": "white"}, "id": "26074087", "label": "26074087", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/26074087\" target=\"_blank\"\u003e Link:26074087"}, {"font": {"color": "white"}, "id": "29069470", "label": "29069470", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/29069470\" target=\"_blank\"\u003e Link:29069470"}, {"font": {"color": "white"}, "id": "29059173", "label": "29059173", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/29059173\" target=\"_blank\"\u003e Link:29059173"}, {"font": {"color": "white"}, "id": "28642997", "label": "28642997", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28642997\" target=\"_blank\"\u003e Link:28642997"}, {"font": {"color": "white"}, "id": "30618016", "label": "30618016", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/30618016\" target=\"_blank\"\u003e Link:30618016"}, {"font": {"color": "white"}, "id": "26496030", "label": "26496030", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/26496030\" target=\"_blank\"\u003e Link:26496030"}, {"font": {"color": "white"}, "id": "29168346", "label": "29168346", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/29168346\" target=\"_blank\"\u003e Link:29168346"}, {"font": {"color": "white"}, "id": "26811690", "label": "26811690", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/26811690\" target=\"_blank\"\u003e Link:26811690"}, {"font": {"color": "white"}, "id": "28771744", "label": "28771744", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28771744\" target=\"_blank\"\u003e Link:28771744"}, {"font": {"color": "white"}, "id": "30405814", "label": "30405814", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/30405814\" target=\"_blank\"\u003e Link:30405814"}, {"font": {"color": "white"}, "id": "26910837", "label": "26910837", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/26910837\" target=\"_blank\"\u003e Link:26910837"}, {"font": {"color": "white"}, "id": "24608975", "label": "24608975", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/24608975\" target=\"_blank\"\u003e Link:24608975"}, {"font": {"color": "white"}, "id": "25320087", "label": "25320087", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25320087\" target=\"_blank\"\u003e Link:25320087"}, {"font": {"color": "white"}, "id": "29960071", "label": "29960071", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/29960071\" target=\"_blank\"\u003e Link:29960071"}, {"font": {"color": "white"}, "id": "27022003", "label": "27022003", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/27022003\" target=\"_blank\"\u003e Link:27022003"}, {"font": {"color": "white"}, "id": "25128227", "label": "25128227", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25128227\" target=\"_blank\"\u003e Link:25128227"}, {"font": {"color": "white"}, "id": "25335771", "label": "25335771", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25335771\" target=\"_blank\"\u003e Link:25335771"}, {"font": {"color": "white"}, "id": "27044843", "label": "27044843", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/27044843\" target=\"_blank\"\u003e Link:27044843"}, {"font": {"color": "white"}, "id": "25569148", "label": "25569148", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25569148\" target=\"_blank\"\u003e Link:25569148"}, {"font": {"color": "white"}, "id": "28607512", "label": "28607512", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28607512\" target=\"_blank\"\u003e Link:28607512"}, {"font": {"color": "white"}, "id": "18988627", "label": "18988627", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18988627\" target=\"_blank\"\u003e Link:18988627"}, {"color": "#dd4b39", "font": {"color": "white"}, "id": "27141977", "label": "27141977", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/27141977\" target=\"_blank\"\u003eThoracic epidural analgesia: a new approach for the treatment of acute pancreatitis?", "value": 1}, {"font": {"color": "white"}, "id": "22885331", "label": "22885331", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/22885331\" target=\"_blank\"\u003e Link:22885331"}, {"font": {"color": "white"}, "id": "23622135", "label": "23622135", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23622135\" target=\"_blank\"\u003e Link:23622135"}, {"font": {"color": "white"}, "id": "23896955", "label": "23896955", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23896955\" target=\"_blank\"\u003e Link:23896955"}, {"font": {"color": "white"}, "id": "22058144", "label": "22058144", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/22058144\" target=\"_blank\"\u003e Link:22058144"}, {"font": {"color": "white"}, "id": "23203897", "label": "23203897", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23203897\" target=\"_blank\"\u003e Link:23203897"}, {"font": {"color": "white"}, "id": "25685727", "label": "25685727", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25685727\" target=\"_blank\"\u003e Link:25685727"}, {"font": {"color": "white"}, "id": "16707751", "label": "16707751", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16707751\" target=\"_blank\"\u003e Link:16707751"}, {"font": {"color": "white"}, "id": "18191686", "label": "18191686", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18191686\" target=\"_blank\"\u003e Link:18191686"}, {"font": {"color": "white"}, "id": "16633121", "label": "16633121", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16633121\" target=\"_blank\"\u003e Link:16633121"}, {"font": {"color": "white"}, "id": "16607683", "label": "16607683", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16607683\" target=\"_blank\"\u003e Link:16607683"}, {"font": {"color": "white"}, "id": "2252994", "label": "2252994", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/2252994\" target=\"_blank\"\u003e Link:2252994"}, {"font": {"color": "white"}, "id": "18852942", "label": "18852942", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18852942\" target=\"_blank\"\u003e Link:18852942"}, {"font": {"color": "white"}, "id": "19125434", "label": "19125434", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/19125434\" target=\"_blank\"\u003e Link:19125434"}, {"font": {"color": "white"}, "id": "18086987", "label": "18086987", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18086987\" target=\"_blank\"\u003e Link:18086987"}, {"font": {"color": "white"}, "id": "17327743", "label": "17327743", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17327743\" target=\"_blank\"\u003e Link:17327743"}, {"font": {"color": "white"}, "id": "16871070", "label": "16871070", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16871070\" target=\"_blank\"\u003e Link:16871070"}, {"font": {"color": "white"}, "id": "17117138", "label": "17117138", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17117138\" target=\"_blank\"\u003e Link:17117138"}, {"font": {"color": "white"}, "id": "17589385", "label": "17589385", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17589385\" target=\"_blank\"\u003e Link:17589385"}, {"font": {"color": "white"}, "id": "16460474", "label": "16460474", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16460474\" target=\"_blank\"\u003e Link:16460474"}, {"font": {"color": "white"}, "id": "16521220", "label": "16521220", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16521220\" target=\"_blank\"\u003e Link:16521220"}, {"font": {"color": "white"}, "id": "17646505", "label": "17646505", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17646505\" target=\"_blank\"\u003e Link:17646505"}, {"font": {"color": "white"}, "id": "9310001", "label": "9310001", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/9310001\" target=\"_blank\"\u003e Link:9310001"}, {"font": {"color": "white"}, "id": "19934868", "label": "19934868", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/19934868\" target=\"_blank\"\u003e Link:19934868"}, {"font": {"color": "white"}, "id": "24314012", "label": "24314012", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/24314012\" target=\"_blank\"\u003e Link:24314012"}, {"font": {"color": "white"}, "id": "10969322", "label": "10969322", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/10969322\" target=\"_blank\"\u003e Link:10969322"}, {"font": {"color": "white"}, "id": "17717251", "label": "17717251", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17717251\" target=\"_blank\"\u003e Link:17717251"}, {"font": {"color": "white"}, "id": "16480459", "label": "16480459", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16480459\" target=\"_blank\"\u003e Link:16480459"}, {"font": {"color": "white"}, "id": "11908096", "label": "11908096", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/11908096\" target=\"_blank\"\u003e Link:11908096"}, {"font": {"color": "white"}, "id": "26604652", "label": "26604652", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/26604652\" target=\"_blank\"\u003e Link:26604652"}, {"font": {"color": "white"}, "id": "17113358", "label": "17113358", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17113358\" target=\"_blank\"\u003e Link:17113358"}, {"font": {"color": "white"}, "id": "18854796", "label": "18854796", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18854796\" target=\"_blank\"\u003e Link:18854796"}, {"font": {"color": "white"}, "id": "22100213", "label": "22100213", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/22100213\" target=\"_blank\"\u003e Link:22100213"}, {"font": {"color": "white"}, "id": "23100216", "label": "23100216", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23100216\" target=\"_blank\"\u003e Link:23100216"}, {"font": {"color": "white"}, "id": "7587228", "label": "7587228", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/7587228\" target=\"_blank\"\u003e Link:7587228"}, {"color": "#dd4b39", "font": {"color": "white"}, "id": "31622334", "label": "31622334", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/31622334\" target=\"_blank\"\u003eUse of personalised risk-based screening schedules to optimise workload and sojourn time in screening programmes for diabetic retinopathy: A retrospective cohort study", "value": 1}, {"font": {"color": "white"}, "id": "20536486", "label": "20536486", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/20536486\" target=\"_blank\"\u003e Link:20536486"}, {"font": {"color": "white"}, "id": "17627978", "label": "17627978", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17627978\" target=\"_blank\"\u003e Link:17627978"}, {"font": {"color": "white"}, "id": "28224275", "label": "28224275", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28224275\" target=\"_blank\"\u003e Link:28224275"}, {"font": {"color": "white"}, "id": "16026382", "label": "16026382", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16026382\" target=\"_blank\"\u003e Link:16026382"}, {"font": {"color": "white"}, "id": "30559224", "label": "30559224", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/30559224\" target=\"_blank\"\u003e Link:30559224"}, {"font": {"color": "white"}, "id": "24599419", "label": "24599419", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/24599419\" target=\"_blank\"\u003e Link:24599419"}, {"font": {"color": "white"}, "id": "19940227", "label": "19940227", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/19940227\" target=\"_blank\"\u003e Link:19940227"}, {"font": {"color": "white"}, "id": "21792613", "label": "21792613", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/21792613\" target=\"_blank\"\u003e Link:21792613"}, {"font": {"color": "white"}, "id": "28840258", "label": "28840258", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28840258\" target=\"_blank\"\u003e Link:28840258"}, {"font": {"color": "white"}, "id": "28423305", "label": "28423305", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28423305\" target=\"_blank\"\u003e Link:28423305"}, {"font": {"color": "white"}, "id": "21562322", "label": "21562322", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/21562322\" target=\"_blank\"\u003e Link:21562322"}, {"font": {"color": "white"}, "id": "23055834", "label": "23055834", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/23055834\" target=\"_blank\"\u003e Link:23055834"}, {"font": {"color": "white"}, "id": "2062510", "label": "2062510", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/2062510\" target=\"_blank\"\u003e Link:2062510"}, {"font": {"color": "white"}, "id": "24682180", "label": "24682180", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/24682180\" target=\"_blank\"\u003e Link:24682180"}, {"font": {"color": "white"}, "id": "28684650", "label": "28684650", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/28684650\" target=\"_blank\"\u003e Link:28684650"}, {"font": {"color": "white"}, "id": "25510978", "label": "25510978", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/25510978\" target=\"_blank\"\u003e Link:25510978"}, {"color": "#dd4b39", "font": {"color": "white"}, "id": "19102767", "label": "19102767", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/19102767\" target=\"_blank\"\u003eHepatitis E virus is highly prevalent among pregnant women in Gabon, central Africa, with different patterns between rural and urban areas", "value": 1}, {"font": {"color": "white"}, "id": "12740830", "label": "12740830", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/12740830\" target=\"_blank\"\u003e Link:12740830"}, {"font": {"color": "white"}, "id": "18287615", "label": "18287615", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18287615\" target=\"_blank\"\u003e Link:18287615"}, {"font": {"color": "white"}, "id": "18287603", "label": "18287603", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18287603\" target=\"_blank\"\u003e Link:18287603"}, {"font": {"color": "white"}, "id": "18192058", "label": "18192058", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18192058\" target=\"_blank\"\u003e Link:18192058"}, {"font": {"color": "white"}, "id": "16705571", "label": "16705571", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16705571\" target=\"_blank\"\u003e Link:16705571"}, {"font": {"color": "white"}, "id": "18297720", "label": "18297720", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18297720\" target=\"_blank\"\u003e Link:18297720"}, {"font": {"color": "white"}, "id": "9272579", "label": "9272579", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/9272579\" target=\"_blank\"\u003e Link:9272579"}, {"font": {"color": "white"}, "id": "9625307", "label": "9625307", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/9625307\" target=\"_blank\"\u003e Link:9625307"}, {"font": {"color": "white"}, "id": "8355020", "label": "8355020", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/8355020\" target=\"_blank\"\u003e Link:8355020"}, {"font": {"color": "white"}, "id": "16254969", "label": "16254969", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16254969\" target=\"_blank\"\u003e Link:16254969"}, {"font": {"color": "white"}, "id": "1940876", "label": "1940876", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/1940876\" target=\"_blank\"\u003e Link:1940876"}, {"font": {"color": "white"}, "id": "9311635", "label": "9311635", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/9311635\" target=\"_blank\"\u003e Link:9311635"}, {"font": {"color": "white"}, "id": "10504860", "label": "10504860", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/10504860\" target=\"_blank\"\u003e Link:10504860"}, {"font": {"color": "white"}, "id": "16257426", "label": "16257426", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16257426\" target=\"_blank\"\u003e Link:16257426"}, {"font": {"color": "white"}, "id": "8915876", "label": "8915876", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/8915876\" target=\"_blank\"\u003e Link:8915876"}, {"font": {"color": "white"}, "id": "7485684", "label": "7485684", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/7485684\" target=\"_blank\"\u003e Link:7485684"}, {"font": {"color": "white"}, "id": "14981755", "label": "14981755", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/14981755\" target=\"_blank\"\u003e Link:14981755"}, {"font": {"color": "white"}, "id": "18098159", "label": "18098159", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/18098159\" target=\"_blank\"\u003e Link:18098159"}, {"font": {"color": "white"}, "id": "16413822", "label": "16413822", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/16413822\" target=\"_blank\"\u003e Link:16413822"}, {"font": {"color": "white"}, "id": "17728471", "label": "17728471", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17728471\" target=\"_blank\"\u003e Link:17728471"}, {"font": {"color": "white"}, "id": "17336401", "label": "17336401", "shape": "dot", "title": "\u003ca href=\"https://pubmed.ncbi.nlm.nih.gov/17336401\" target=\"_blank\"\u003e Link:17336401"}]);
+        edges = new vis.DataSet([{"from": "31568528", "to": "10647931", "value": 1}, {"from": "31568528", "to": "21376230", "value": 1}, {"from": "31568528", "to": "18948947", "value": 1}, {"from": "31568528", "to": "15192155", "value": 1}, {"from": "31568528", "to": "2274789", "value": 1}, {"from": "31568528", "to": "12893203", "value": 1}, {"from": "31568528", "to": "6095109", "value": 1}, {"from": "31568528", "to": "17611206", "value": 1}, {"from": "31568528", "to": "14993899", "value": 1}, {"from": "31568528", "to": "24071849", "value": 1}, {"from": "31568528", "to": "27899578", "value": 1}, {"from": "31568528", "to": "23539594", "value": 1}, {"from": "31568528", "to": "23770567", "value": 1}, {"from": "31568528", "to": "22960745", "value": 1}, {"from": "31568528", "to": "23945592", "value": 1}, {"from": "31568528", "to": "22759861", "value": 1}, {"from": "31568528", "to": "23340843", "value": 1}, {"from": "31568528", "to": "24390350", "value": 1}, {"from": "31568528", "to": "22904074", "value": 1}, {"from": "31568528", "to": "23383675", "value": 1}, {"from": "31568528", "to": "29625053", "value": 1}, {"from": "31568528", "to": "26635391", "value": 1}, {"from": "31568528", "to": "24183448", "value": 1}, {"from": "31568528", "to": "25690659", "value": 1}, {"from": "31568528", "to": "27911828", "value": 1}, {"from": "31568528", "to": "22460905", "value": 1}, {"from": "31568528", "to": "25501392", "value": 1}, {"from": "31568528", "to": "27333808", "value": 1}, {"from": "31568528", "to": "21977986", "value": 1}, {"from": "31568528", "to": "28126037", "value": 1}, {"from": "31568528", "to": "29236960", "value": 1}, {"from": "31568528", "to": "27811361", "value": 1}, {"from": "31568528", "to": "28399410", "value": 1}, {"from": "31568528", "to": "28564583", "value": 1}, {"from": "31568528", "to": "26130958", "value": 1}, {"from": "31568528", "to": "26201458", "value": 1}, {"from": "31568528", "to": "27004405", "value": 1}, {"from": "31568528", "to": "25954303", "value": 1}, {"from": "31568528", "to": "11809771", "value": 1}, {"from": "31568528", "to": "26074087", "value": 1}, {"from": "31568528", "to": "29069470", "value": 1}, {"from": "31568528", "to": "29059173", "value": 1}, {"from": "31568528", "to": "28642997", "value": 1}, {"from": "31568528", "to": "30618016", "value": 1}, {"from": "31568528", "to": "26496030", "value": 1}, {"from": "31568528", "to": "29168346", "value": 1}, {"from": "31568528", "to": "26811690", "value": 1}, {"from": "31568528", "to": "28771744", "value": 1}, {"from": "31568528", "to": "30405814", "value": 1}, {"from": "31568528", "to": "26910837", "value": 1}, {"from": "31568528", "to": "24608975", "value": 1}, {"from": "31568528", "to": "25320087", "value": 1}, {"from": "31568528", "to": "29960071", "value": 1}, {"from": "31568528", "to": "27022003", "value": 1}, {"from": "31568528", "to": "25128227", "value": 1}, {"from": "31568528", "to": "25335771", "value": 1}, {"from": "31568528", "to": "27044843", "value": 1}, {"from": "31568528", "to": "25569148", "value": 1}, {"from": "31568528", "to": "28607512", "value": 1}, {"from": "31568528", "to": "18988627", "value": 1}, {"from": "27141977", "to": "22885331", "value": 1}, {"from": "27141977", "to": "23622135", "value": 1}, {"from": "27141977", "to": "23896955", "value": 1}, {"from": "27141977", "to": "22058144", "value": 1}, {"from": "27141977", "to": "23203897", "value": 1}, {"from": "27141977", "to": "25685727", "value": 1}, {"from": "27141977", "to": "16707751", "value": 1}, {"from": "27141977", "to": "18191686", "value": 1}, {"from": "27141977", "to": "16633121", "value": 1}, {"from": "27141977", "to": "16607683", "value": 1}, {"from": "27141977", "to": "2252994", "value": 1}, {"from": "27141977", "to": "18852942", "value": 1}, {"from": "27141977", "to": "19125434", "value": 1}, {"from": "27141977", "to": "18086987", "value": 1}, {"from": "27141977", "to": "17327743", "value": 1}, {"from": "27141977", "to": "16871070", "value": 1}, {"from": "27141977", "to": "17117138", "value": 1}, {"from": "27141977", "to": "17589385", "value": 1}, {"from": "27141977", "to": "16460474", "value": 1}, {"from": "27141977", "to": "16521220", "value": 1}, {"from": "27141977", "to": "17646505", "value": 1}, {"from": "27141977", "to": "9310001", "value": 1}, {"from": "27141977", "to": "19934868", "value": 1}, {"from": "27141977", "to": "24314012", "value": 1}, {"from": "27141977", "to": "10969322", "value": 1}, {"from": "27141977", "to": "17717251", "value": 1}, {"from": "27141977", "to": "16480459", "value": 1}, {"from": "27141977", "to": "11908096", "value": 1}, {"from": "27141977", "to": "26604652", "value": 1}, {"from": "27141977", "to": "17113358", "value": 1}, {"from": "27141977", "to": "18854796", "value": 1}, {"from": "27141977", "to": "22100213", "value": 1}, {"from": "27141977", "to": "23100216", "value": 1}, {"from": "27141977", "to": "7587228", "value": 1}, {"from": "31622334", "to": "20536486", "value": 1}, {"from": "31622334", "to": "17627978", "value": 1}, {"from": "31622334", "to": "28224275", "value": 1}, {"from": "31622334", "to": "16026382", "value": 1}, {"from": "31622334", "to": "30559224", "value": 1}, {"from": "31622334", "to": "24599419", "value": 1}, {"from": "31622334", "to": "19940227", "value": 1}, {"from": "31622334", "to": "21792613", "value": 1}, {"from": "31622334", "to": "28840258", "value": 1}, {"from": "31622334", "to": "28423305", "value": 1}, {"from": "31622334", "to": "21562322", "value": 1}, {"from": "31622334", "to": "23055834", "value": 1}, {"from": "31622334", "to": "2062510", "value": 1}, {"from": "31622334", "to": "24682180", "value": 1}, {"from": "31622334", "to": "28684650", "value": 1}, {"from": "31622334", "to": "25510978", "value": 1}, {"from": "19102767", "to": "12740830", "value": 1}, {"from": "19102767", "to": "18287615", "value": 1}, {"from": "19102767", "to": "18287603", "value": 1}, {"from": "19102767", "to": "18192058", "value": 1}, {"from": "19102767", "to": "16705571", "value": 1}, {"from": "19102767", "to": "18297720", "value": 1}, {"from": "19102767", "to": "9272579", "value": 1}, {"from": "19102767", "to": "9625307", "value": 1}, {"from": "19102767", "to": "8355020", "value": 1}, {"from": "19102767", "to": "16254969", "value": 1}, {"from": "19102767", "to": "1940876", "value": 1}, {"from": "19102767", "to": "9311635", "value": 1}, {"from": "19102767", "to": "10504860", "value": 1}, {"from": "19102767", "to": "16257426", "value": 1}, {"from": "19102767", "to": "8915876", "value": 1}, {"from": "19102767", "to": "7485684", "value": 1}, {"from": "19102767", "to": "14981755", "value": 1}, {"from": "19102767", "to": "18098159", "value": 1}, {"from": "19102767", "to": "16413822", "value": 1}, {"from": "19102767", "to": "17728471", "value": 1}, {"from": "19102767", "to": "17336401", "value": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+        // if this network requires displaying the configure window,
+        // put it in its div
+        options.configure["container"] = document.getElementById("config");
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+        // make a custom popup
+        var popup = document.createElement("div");
+        popup.className = 'popup';
+        popupTimeout = null;
+        popup.addEventListener('mouseover', function () {
+            console.log(popup)
+            if (popupTimeout !== null) {
+                clearTimeout(popupTimeout);
+                popupTimeout = null;
+            }
+        });
+        popup.addEventListener('mouseout', function () {
+            if (popupTimeout === null) {
+                hidePopup();
+            }
+        });
+        container.appendChild(popup);
+
+
+        // use the popup event to show
+        network.on("showPopup", function (params) {
+            showPopup(params);
+        });
+
+        // use the hide event to hide it
+        network.on("hidePopup", function (params) {
+            hidePopup();
+        });
+
+
+        // hiding the popup through css
+        function hidePopup() {
+            popupTimeout = setTimeout(function () { popup.style.display = 'none'; }, 500);
+        }
+
+        // showing the popup
+        function showPopup(nodeId) {
+            // get the data from the vis.DataSet
+            var nodeData = nodes.get([nodeId]);
+            popup.innerHTML = nodeData[0].title;
+
+            // get the position of the node
+            var posCanvas = network.getPositions([nodeId])[nodeId];
+
+            // get the bounding box of the node
+            var boundingBox = network.getBoundingBox(nodeId);
+
+            //position tooltip:
+            posCanvas.x = posCanvas.x + 0.5 * (boundingBox.right - boundingBox.left);
+
+            // convert coordinates to the DOM space
+            var posDOM = network.canvasToDOM(posCanvas);
+
+            // Give it an offset
+            posDOM.x += 10;
+            posDOM.y -= 20;
+
+            // show and place the tooltip.
+            popup.style.display = 'block';
+            popup.style.top = posDOM.y + 'px';
+            popup.style.left = posDOM.x + 'px';
+        }
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
