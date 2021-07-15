@@ -480,6 +480,9 @@ def articleConnectivity(data_dic):
 
 def recomendationSystem(data_dic):
     """Function to return the most relevant article according to user's given query"""
+
+    st.title("Recommendation article based on input query")
+
     # Prompting what user want to search for
     input_query = st.text_area("Enter text", "Type here")
 
@@ -517,6 +520,8 @@ def recomendationSystem(data_dic):
 
 def clusteringKeyword(data_dic):
     """Function to return the document in relevant cluster based on Abstract text"""
+
+    st.title("Clustered keyword connected by relevancy")
 
     # Loads abstracts with pmid into tmp_dict: tmp_dict = {pmid:abstract}
     tmp_dict = {} #{PMID:Abstract}
