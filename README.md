@@ -300,7 +300,7 @@ Bonham-Carter, Oliver. "BeagleTM: An Adaptable Text Mining Method for
 
 The BibTex code is provided below.
 
-``` bash
+``` \bash
 @inproceedings{bonham2020beagletm,
  title={BeagleTM: An Adaptable Text Mining Method for Relationship Discovery in Literature},
  author={Bonham-Carter, Oliver},
@@ -310,6 +310,51 @@ The BibTex code is provided below.
  organization={Springer}
 }
 ```
+---
+### Addition by Mai (work in progress):
+
+#### Interactive recommendation system (Full implementation + Still debugging):
+
+1. Purpose:
+
+This feature serves as an interactive search engine for beagleTM's users. Sometime, user couldn't come up with a specific set of keywords for the theme of the articles that they want to search for. In such a case, user normally tries to describe their desired topic by a short explanation/description. Hence, this feature will compute the degree of relevancy between user's description of the topic and the abstract of articles in the corpus by computing document similarity. At the end, the feature will return 5 recommended articles that are most suitable to user's need.
+
+2. Method:
+
+The feature first compute TF-IDF normalization and erase stop word from both input query and the list of abstracts. Then, the TF-IDF value will be vectorized and visualized by cosine similarity algorithm. The `cosine_similarity()` method with the parameter of sliced `[0:1]` of TF-IDF value will compute a pairwise similarity score between the first item in the list (which is the input query) with the rest of the items. The final cosine similarity score represent the degree of relevancy between the user's input query and the articles; the nearer the score to 1, the more relevant the article will be.
+
+3. Current status: There's a pending issue with the data structure used in the `recomendationSystem()` method.
+
+4. Expected result:
+```
+Input: Topic description (can even be word salad)
+
+Output:
+Top 5 articles recommended for your search are:
+Article 1: Title 1
+...
+Article 5: Title 5
+```
+
+#### Clustered relevant articles by clustering keywords(Full implementation + Still debugging):
+
+1. Purpose:
+
+This feature serves as a tool to narrow the searching scale for user by clustering keywords into the k number of clusters, each cluster contains a smaller pool of keywords that are highly relevant to each other. After keywords are clustered, the articles that contain any keyword in each cluster will be classified into that cluster. The main idea behind this computation is if keyword are being clustered, that means they are likely to represent a common theme; hence, the article contain these keyword might be highly relevant to each other.
+
+2. Method:
+
+First, the feature vectorizes the list of abstracts by TF-IDF normalization. Then, it allows user to choose the amount of cluster that user want to produce, the bigger number of cluster, the smaller the size of each cluster until it reach the neutral point. After that, the features uses sklearn.Kmeans to clustered keyword into chosen number of cluster by using K mean clustering. Finally, the article that contain any of the keyword in each article will be placed together in the form of a connectivity graph.
+
+3. Current status: There's a pending issue with the data structure used in the `clusteringKeyword()` method since the `keywordAnalysis()` need to take a specific parameter to be computed.
+
+4. Expected result:
+A connectivity graph of article with much smaller size inside and most article are highly relevant to each other.
+
+#### Pending idea:
+ - Keyword recommendation: Train a big set of keyword to the point that the program can compute the suitable keywords for user's input explanation/description about the topic
+ - Article ranking system: bases on the reputation of the writer, the credibility of the publisher, the amount of award that the article receives, etc ..
+
 
 ## A work in progress
 

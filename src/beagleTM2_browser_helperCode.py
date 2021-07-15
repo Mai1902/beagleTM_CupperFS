@@ -40,6 +40,12 @@ from plotly import graph_objs as go
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import plotly.express as px
 import networkx as nx
+from nltk.corpus import stopwords
+from sklearn.cluster import KMeans
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+
 
 import spacy # needed to work with stopwords
 from spacy.lang.en.stop_words import STOP_WORDS # needed to work with stop words
@@ -472,7 +478,79 @@ def articleConnectivity(data_dic):
 	# st.balloons()
 	#end of articleConnectivity()
 
+def recomendationSystem(data_dic):
+    """Function to return the most relevant article according to user's given query"""
+    # Prompting what user want to search for
+    input_query = st.text_area("Enter text", "Type here")
 
+    # create an array with the first item is the input query
+    documents = []
+    documents.append(input_query)
+
+    # create a dictionary with the key as title and value is the correspond abstract
+    tmp_dict = {} # TODO: tmp_dict = {key==title, value==abstract]}]
+    tmp_list = list(tmp_dict)
+
+    # finalize the array to compute document similarity by adding all of the abstract into the list
+    for value in tmp_dict.values():
+        documents.append(value)
+
+    # normalize and compute TF-IDF of the list
+    vectorizer = TfidfVectorizer(stop_words = 'english')
+    data = vectorizer.fit_transform(documents)
+
+    # compute pairwise cosine similarity value between the input query (the first element of the list)
+    # and the rest of the item in the list
+    cosine_similarity_score = cosine_similarity(data[0:1], data)
+
+    # sort the similarity_score from the largest to the fifth largest and return the index
+    recom_docs_indices = cosine_similarity_score.argsort()[:-5:-1]
+
+    st.write("Top 5 relevant articles to your search are: ")
+    st.write()
+
+    # return the title of top 5 relevant article to the input query
+    for i in recom_docs_indices and i > 0:
+            st.write(tmp_list[i-1])
+            st.write()
+
+
+def clusteringKeyword(data_dic):
+    """Function to return the document in relevant cluster based on Abstract text"""
+
+    # Loads abstracts with pmid into tmp_dict: tmp_dict = {pmid:abstract}
+    tmp_dict = {} #{PMID:Abstract}
+
+    # Loads abstracts' text into an array called document
+    document = [] #Abstract
+
+    # Vectorizing texts using TF-IDF transformation
+    vectorizer = TfidfVectorizer(stop_words = 'english')
+    data = vectorizer.fit_transform(documents)
+
+    # Choosing number of clusters based on self preference
+    true_k = st.sidebar.slider(
+        "Select the number of clusters", 1, 20, value=2
+    )
+
+    # Clustering keywords using KMean clusters
+    clustering_model = KMeans(n_clusters = true_k,
+                          init = 'k-means++',
+                          max_iter = 300, n_init = 10)
+    clustering_model.fit(data)
+
+    sorted_centroids = clustering_model.cluster_centers_.argsort()[:, ::-1]
+    keyword = vectorizer.get_feature_names()
+
+    for i in range(true_k):
+        st.write("Cluster %d:" % i, end='')
+        for ind in sorted_centroids[i, :10]:
+            st.write(' %s' % keyword[ind], end='')
+            keywordAnalysis(data_dic)
+            #TODO:This function is use to find the article that contain any of the keyword in the cluster
+            # declare dict of keyword in clustered
+        st.write()
+        st.write()
 
 
 def keywordAnalysis(data_dic):

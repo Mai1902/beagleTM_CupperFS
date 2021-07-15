@@ -69,6 +69,8 @@ def begin():
 			"Articles having ALL of the selected keywords",
 			"Heatmaps of keyword saturation",
 			"Make Simple Heatmaps"
+			"Clustered keyword connected by relevancy"
+			"Recommendation article based on input query" #interactive
 		],
 	)
 	if doThis_sb == "ReadMe":
@@ -96,6 +98,12 @@ def begin():
 
 	if doThis_sb == "Make Simple Heatmaps":
 		hc.simpleHeatmaps(data, data_dic)
+
+	if doThis_sb == "Recommendation article based on query":
+		hc.recomendationSystem(data_dic)
+
+	if doThis_sb == "Clustered keyword connected by relevancy":
+		hc.clusteringKeyword(data_dic)
 
 	hc.writer("\U0001F415 WOO WOO!! \U0001F415")
 	#hc.writer(" ok :","computer")
